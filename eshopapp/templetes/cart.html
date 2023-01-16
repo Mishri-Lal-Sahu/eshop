@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load cart %}
+{% load custom_filter %}
+
+<div class="container">
+   <div class="border rounded p-4 m-3" style="background-color:orange;">
+       <div class="display-4 pl-4 ml-4">Your Cart</div>
+      <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S.N.</th>
+        <th>Image</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Total Price</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for products in product %}
+    <tr>
+      <td >{{forloop.counter}}</td>
+        <td><img style="height:80px;" src="{{products.image.url}}"></td>
+      <td >{{products.name}}</td>
+      <td >{{products.price|currency}}</td>
+      <td >{{products|cart_quantity:request.session.cart}}</td>
+      <td >{{products|total_price:request.session.cart|currency}}</td>
+    </tr>
+      {% endfor %}
+  </tbody>
+  <tfoot>
+      <tr>
+          <td class="text-center" colspan="5">Total payable amount</td>
+        <td colspan="">{{product|total:request.session.cart|currency}}</td>
+      </tr>
+  </tfoot>
+</table>
+       <div class="m-3 p-3">
+           <a href="#" class="btn btn-outline-info border rounded col-lg-3 " style="float:right" data-toggle="modal" data-target="#exampleModal">Check out</a>
+       </div>
+   </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Check Out Form</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="m-2 p-3">
+            <form action="/checkout" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="">Enter valid address</label>
+                    <input type="text" name="address" class="form-control" aria-describedby="helpId">
+                </div>
+                <div class="form-group">
+                    <label for="">Enter Phone number</label>
+                    <input type="text" name="phone" class="form-control" aria-describedby="helpId">
+                </div>
+                <input type="submit" class="btn btn-outline-info col-lg-6 mt-2" value="Check Out" style="float:right">
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
